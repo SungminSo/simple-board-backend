@@ -1,5 +1,8 @@
 from datetime import datetime
+from marshmallow import fields, Schema
 from . import db, bcrypt
+from .boards import BoardSchema
+from .articles import ArticleSchema
 
 import uuid
 
@@ -14,6 +17,8 @@ class User(db.Model):
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean)
     created_at = db.Column(db.DateTime)
+    boards = db.relationship('boards', backref='user', lazy=True)
+    articles = db.relationship('articles', backref='user', lazy=True)
 
     def __init__(self, email: str, username: str, password: str, is_admin: bool):
         self.uuid = str(uuid.uuid4())
@@ -56,3 +61,15 @@ class User(db.Model):
     @staticmethod
     def find_user_by_uuid(user_uuid: str):
         return User.query.get(user_uuid)
+
+
+class UserSchema(Schema):
+    id = fields.Int(dump_only=True)
+    uuid = fields.Str(required=True)
+    email = fields.Str(required=True)
+    name = fields.Str(required=True)
+    password = fields.Str(required=True)
+    is_admin = fields.Bool(required=True)
+    created_at = fields.DateTime(required=True)
+    boards = fields.Nested(BoardSchema, many=True)
+    articles = fields.Nested(ArticleSchema, many=True)

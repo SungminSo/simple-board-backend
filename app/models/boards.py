@@ -1,5 +1,7 @@
 from datetime import datetime
+from marshmallow import fields, Schema
 from . import db
+from .articles import ArticleSchema
 
 import uuid
 
@@ -12,8 +14,9 @@ class Board(db.Model):
     name = db.Column(db.String(128), nullable=False)
     latest_article = db.Column(db.ARRAY(db.String))
     latest_article_idx = db.Column(db.Integer)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime)
+    articles = db.relationship('articles', backref='board', lazy=True)
 
     def __init__(self, name: str, user_id: int):
         self.uuid = str(uuid.uuid4())
@@ -36,6 +39,13 @@ class Board(db.Model):
         db.session.commit()
         return self.uuid
 
+    def update_latest_article(self, article_uuid: str):
+        self.latest_article_idx += 1
+        self.latest_article[self.latest_article_idx] = article_uuid
+        setattr(self, 'latest_article_idx', self.latest_article_idx)
+        setattr(self, 'latest_article', self.latest_article)
+        db.session.commit()
+
     def delete(self):
         db.session.delete(self)
         db.session.commit()
@@ -52,3 +62,13 @@ class Board(db.Model):
     def find_board_by_uuid(board_uuid: str):
         return Board.query.get(board_uuid)
 
+
+class BoardSchema(Schema):
+    id = fields.Int(dump_only=True)
+    uuid = fields.Str(required=True)
+    name = fields.Str(required=True)
+    latest_article = fields.List(fields.Str())
+    latest_article_idx = fields.Int(dump_only=True)
+    user_id = fields.Int(required=True)
+    created_at = fields.DateTime(required=True)
+    articles = fields.Nested(ArticleSchema, many=True)

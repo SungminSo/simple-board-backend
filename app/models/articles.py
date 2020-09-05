@@ -1,4 +1,5 @@
 from datetime import datetime
+from marshmallow import fields, Schema
 from . import db
 
 import uuid
@@ -11,8 +12,8 @@ class Article(db.Model):
     uuid = db.Column(db.String(128), unique=True, nullable=True)
     title = db.Column(db.String(128), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    board_id = db.Column(db.Integer, db.ForeignKey('board.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    board_id = db.Column(db.Integer, db.ForeignKey('board.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime)
 
     def __init__(self, title: str, content: str, board_id: int, user_id: int):
@@ -50,3 +51,13 @@ class Article(db.Model):
     @staticmethod
     def find_article_by_uuid(article_uuid: str):
         return Article.query.get(article_uuid)
+
+
+class ArticleSchema(Schema):
+    id = fields.Int(dump_only=True)
+    uuid = fields.Str(required=True)
+    title = fields.Str(required=True)
+    content = fields.Str(required=True)
+    board_id = fields.Int(required=True)
+    user_id = fields.Int(required=True)
+    created_at = fields.DateTime(required=True)
