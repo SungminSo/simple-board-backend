@@ -45,6 +45,14 @@ class Article(db.Model):
         db.session.commit()
 
     @staticmethod
+    def get_articles_by_user(user_id: str):
+        return Article.query.filter_by(user_id=user_id).all()
+
+    @staticmethod
+    def get_articles_by_board(board_id: str):
+        return Article.query.filter_by(board_id=board_id).all()
+
+    @staticmethod
     def find_article_by_id(article_id: str):
         return Article.query.get(article_id)
 
