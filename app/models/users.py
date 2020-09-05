@@ -50,9 +50,9 @@ class User(db.Model):
         db.session.commit()
 
     @staticmethod
-    def finc_user_by_id(id: str):
-        return User.query.get(id)
+    def find_user_by_id(user_id: str):
+        return User.query.get(user_id)
 
     @staticmethod
-    def find_user_by_uuid(uuid: str):
-        return User.query.get(uuid)
+    def find_user_by_uuid(user_uuid: str):
+        return User.query.get(user_uuid)
