@@ -19,7 +19,7 @@ class User(db.Model):
         self.uuid = str(uuid.uuid4())
         self.email = email
         self.name = username
-        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+        self.password = bcrypt.generate_password_hash(password, rounds=10).decode('utf-8')
         self.is_admin = is_admin
         self.created_at = datetime.utcnow()
 
@@ -40,7 +40,8 @@ class User(db.Model):
         if self.name != new_username:
             setattr(self, 'name', new_username)
         if self.password != new_password:
-            setattr(self, 'password', new_password)
+            hashed_password = bcrypt.generate_password_hash(new_password, rounds=10).decode('utf-8')
+            setattr(self, 'password', hashed_password)
         db.session.commit()
         return self.uuid
 
