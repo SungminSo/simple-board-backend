@@ -39,14 +39,16 @@ class User(db.Model):
         db.session.commit()
         return self.uuid
 
-    def update(self, new_email, new_username, new_password) -> str:
+    def update(self, new_email: str, new_username: str, new_password: str) -> str:
         if self.email != new_email:
             setattr(self, 'email', new_email)
         if self.name != new_username:
             setattr(self, 'name', new_username)
-        if self.password != new_password:
-            hashed_password = bcrypt.generate_password_hash(new_password, rounds=10).decode('utf-8')
+
+        hashed_password = bcrypt.generate_password_hash(new_password, rounds=10).decode('utf-8')
+        if self.password != hashed_password:
             setattr(self, 'password', hashed_password)
+
         db.session.commit()
         return self.uuid
 
