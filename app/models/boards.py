@@ -55,6 +55,10 @@ class Board(db.Model):
         return Board.query.all()
 
     @staticmethod
+    def get_boards_by_user(user_id: str):
+        return Board.query.filter_by(user_id=user_id).all()
+
+    @staticmethod
     def find_board_by_id(board_id: str):
         return Board.query.get(board_id)
 
