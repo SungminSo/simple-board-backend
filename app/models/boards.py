@@ -12,8 +12,6 @@ class Board(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     uuid = db.Column(db.String(128), unique=True, nullable=False)
     name = db.Column(db.String(128), unique=True, nullable=False)
-    latest_article = db.Column(MutableList.as_mutable(db.ARRAY(db.String)))
-    latest_article_idx = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)
@@ -22,8 +20,6 @@ class Board(db.Model):
     def __init__(self, name: str, user_id: int):
         self.uuid = str(uuid.uuid4())
         self.name = name
-        self.latest_article = []
-        self.latest_article_idx = -1
         self.user_id = user_id
         self.created_at = datetime.utcnow()
         self.updated_at = datetime.utcnow()
@@ -42,15 +38,6 @@ class Board(db.Model):
         self.updated_at = datetime.utcnow()
         db.session.commit()
         return self.uuid
-
-    def update_latest_article(self, article_uuid: str):
-        self.latest_article_idx += 1
-        if self.latest_article_idx > 10:
-            self.latest_article_idx = self.latest_article_idx % 10
-            self.latest_article[self.latest_article_idx] = article_uuid
-        else:
-            self.latest_article.append(article_uuid)
-        db.session.commit()
 
     def delete(self):
         db.session.delete(self)
@@ -81,8 +68,6 @@ class BoardSchema(Schema):
     id = fields.Int(dump_only=True)
     uuid = fields.Str(required=True)
     name = fields.Str(required=True)
-    latest_article = fields.List(fields.Str())
-    latest_article_idx = fields.Int(dump_only=True)
     user_id = fields.Int(required=True)
     created_at = fields.DateTime(required=True)
     updated_at = fields.DateTime(dump_only=True)
