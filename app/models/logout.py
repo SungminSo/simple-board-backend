@@ -24,7 +24,7 @@ class Logout(db.Model):
     @staticmethod
     def check_logout(token: str) -> bool:
         # check whether token has been log-out
-        token = Logout.query.get(token)
+        token = Logout.query.filter_byt(token=token).first()
         if token:
             return True
         else:
