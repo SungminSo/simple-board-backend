@@ -27,7 +27,5 @@ def sign_up():
     )
     user_uuid = user.save()
 
-    token = Auth.generate_user_token(user_uuid, email)
-
-    return json_response({'token': token}, 201)
+    return json_response({'uuid': user_uuid}, 201)
 
