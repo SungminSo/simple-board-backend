@@ -2,6 +2,7 @@ from flask import request, Blueprint, g
 
 from . import json_response
 from ..models.boards import Board, BoardSchema
+from ..models.articles import Article
 from ..shared.auth import Auth
 
 board_api = Blueprint('board', __name__)
@@ -71,8 +72,7 @@ def board_views():
 
     elif request.method == 'DELETE':
         try:
-            req_data = request.get_json()
-            uuid = req_data['uuid']
+            uuid = request.args.get('uuid')
         except TypeError:
             return json_response({'errorMsg': 'please send request data'}, 400)
         except KeyError:
@@ -86,6 +86,9 @@ def board_views():
         if board.user_id != user_id:
             return json_response({'errorMsg': 'permission denied'}, 403)
 
+        articles = Article.get_articles_by_board(board.id)
+        for article in articles:
+            article.delete()
         board.delete()
         return json_response({}, 204)
 
