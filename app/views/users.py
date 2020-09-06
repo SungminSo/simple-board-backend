@@ -13,10 +13,13 @@ def sign_up():
     if not request.method == 'POST':
         return json_response({'errorMsg': 'invalid method'}, 405)
 
-    req_data = request.get_json()
-    email = req_data['email']
-    username = req_data['username']
-    password = req_data['password']
+    try:
+        req_data = request.get_json()
+        email = req_data['email']
+        username = req_data['username']
+        password = req_data['password']
+    except KeyError:
+        return json_response({'errorMsg': 'please check your request data'}, 400)
 
     user_already_exists = User.find_user_by_email(email)
     if user_already_exists:
@@ -38,9 +41,12 @@ def log_in():
     if not request.method == 'POST':
         return json_response({'errorMsg': 'invalid method'}, 405)
 
-    req_data = request.get_json()
-    email = req_data['email']
-    password = req_data['password']
+    try:
+        req_data = request.get_json()
+        email = req_data['email']
+        password = req_data['password']
+    except KeyError:
+        return json_response({'errorMsg': 'please check your request data'}, 400)
 
     if len(email) == 0 or len(password) == 0:
         return json_response({'errorMsg': 'please check your email and password'}, 400)
