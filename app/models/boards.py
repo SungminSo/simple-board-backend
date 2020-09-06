@@ -45,7 +45,7 @@ class Board(db.Model):
 
     @staticmethod
     def get_all_boards():
-        return Board.query.all()
+        return Board.query.order_by(Board.updated_at.desc()).all()
 
     @staticmethod
     def get_boards_by_user(user_id: str):

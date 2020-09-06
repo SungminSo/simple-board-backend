@@ -9,6 +9,22 @@ board_api = Blueprint('board', __name__)
 board_schema = BoardSchema
 
 
+@board_api.route('/board/<int:limit>/boards/<int:page>', methods=['GET'])
+def get_boards(limit: int, page: int):
+    boards = Board.get_all_boards()
+    ret_boards = []
+
+    for board in boards[limit * (page-1):limit * page]:
+        ret_boards.append({
+            "uuid": board.uuid,
+            "name": board.name,
+            "created_at": board.created_at,
+            "updated_at": board.updated_at
+        })
+
+    return json_response({'total': len(boards), 'boards': ret_boards}, 200)
+
+
 @board_api.route("/board", methods=['GET', 'POST', 'PATCH', 'DELETE'])
 @Auth.token_required
 def board_views():
