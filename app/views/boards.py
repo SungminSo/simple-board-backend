@@ -10,6 +10,7 @@ board_schema = BoardSchema
 
 
 @board_api.route('/board/<int:limit>/boards/<int:page>', methods=['GET'])
+@Auth.token_required
 def get_boards(limit: int, page: int):
     boards = Board.get_all_boards()
     ret_boards = []
@@ -25,87 +26,72 @@ def get_boards(limit: int, page: int):
     return json_response({'total': len(boards), 'boards': ret_boards}, 200)
 
 
-@board_api.route("/board", methods=['GET', 'POST', 'PATCH', 'DELETE'])
+@board_api.route('/board', methods=['POST'])
 @Auth.token_required
-def board_views():
-    if request.method == 'GET':
-        boards = Board.get_all_boards()
-        ret_boards = {}
+def create_boards():
+    try:
+        req_data = request.get_json()
+        name = req_data['name']
+    except TypeError:
+        return json_response({'errorMsg': 'please send request data'}, 400)
+    except KeyError:
+        return json_response({'errorMsg': 'please check your request data'}, 400)
 
-        for board in boards:
-            ret_boards[board.name] = {
-                "uuid": board.uuid,
-                "name": board.name,
-                "created_at": board.created_at,
-                "updated_at": board.updated_at
-            }
+    board_already_exists = Board.find_board_by_name(name)
+    if board_already_exists:
+        return json_response({'errorMsg': 'board already exists'}, 409)
 
-        return json_response({'boards': ret_boards}, 200)
+    user_id = g.user['id']
 
-    elif request.method == 'POST':
-        try:
-            req_data = request.get_json()
-            name = req_data['name']
-        except TypeError:
-            return json_response({'errorMsg': 'please send request data'}, 400)
-        except KeyError:
-            return json_response({'errorMsg': 'please check your request data'}, 400)
+    board = Board(
+        name=name,
+        user_id=user_id
+    )
+    board_uuid = board.save()
 
-        board_already_exists = Board.find_board_by_name(name)
-        if board_already_exists:
-            return json_response({'errorMsg': 'board already exists'}, 409)
+    return json_response({'uuid': board_uuid}, 201)
 
-        user_id = g.user['id']
 
-        board = Board(
-            name=name,
-            user_id=user_id
-        )
-        board_uuid = board.save()
+@board_api.route('/board', methods=['PATCH'])
+@Auth.token_required
+def update_board():
+    try:
+        req_data = request.get_json()
+        uuid = req_data['uuid']
+        new_name = req_data['new_name']
+    except TypeError:
+        return json_response({'errorMsg': 'please send request data'}, 400)
+    except KeyError:
+        return json_response({'errorMsg': 'please check your request data'}, 400)
 
-        return json_response({'uuid': board_uuid}, 201)
+    board = Board.find_board_by_uuid(uuid)
+    if not board:
+        return json_response({'errorMsg': 'board does not exist'}, 404)
 
-    elif request.method == 'PATCH':
-        try:
-            req_data = request.get_json()
-            uuid = req_data['uuid']
-            new_name = req_data['new_name']
-        except TypeError:
-            return json_response({'errorMsg': 'please send request data'}, 400)
-        except KeyError:
-            return json_response({'errorMsg': 'please check your request data'}, 400)
+    user_id = g.user['id']
+    if board.user_id != user_id:
+        return json_response({'errorMsg': 'permission denied'}, 403)
 
-        board = Board.find_board_by_uuid(uuid)
-        if not board:
-            return json_response({'errorMsg': 'board does not exist'}, 404)
+    board_uuid = board.update(new_name)
+    return json_response({'uuid': board_uuid}, 200)
 
-        user_id = g.user['id']
-        if board.user_id != user_id:
-            return json_response({'errorMsg': 'permission denied'}, 403)
 
-        board_uuid = board.update(new_name)
-        return json_response({'uuid': board_uuid}, 200)
+@board_api.route('/board/<str:uuid>', methods=['DELETE'])
+@Auth.token_required
+def delete_board(uuid):
+    board = Board.find_board_by_uuid(uuid)
+    if not board:
+        return json_response({'errorMsg': 'board does not exist'}, 404)
 
-    elif request.method == 'DELETE':
-        try:
-            uuid = request.args.get('uuid')
-        except TypeError:
-            return json_response({'errorMsg': 'please send request data'}, 400)
-        except KeyError:
-            return json_response({'errorMsg': 'please check your request data'}, 400)
+    user_id = g.user['id']
+    if board.user_id != user_id:
+        return json_response({'errorMsg': 'permission denied'}, 403)
 
-        board = Board.find_board_by_uuid(uuid)
-        if not board:
-            return json_response({'errorMsg': 'board does not exist'}, 404)
+    articles = Article.get_articles_by_board(board.id)
+    for article in articles:
+        article.delete()
+    board.delete()
+    return json_response({}, 204)
 
-        user_id = g.user['id']
-        if board.user_id != user_id:
-            return json_response({'errorMsg': 'permission denied'}, 403)
-
-        articles = Article.get_articles_by_board(board.id)
-        for article in articles:
-            article.delete()
-        board.delete()
-        return json_response({}, 204)
 
 

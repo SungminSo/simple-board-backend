@@ -49,7 +49,7 @@ class Board(db.Model):
 
     @staticmethod
     def get_boards_by_user(user_id: str):
-        return Board.query.filter_by(user_id=user_id).all()
+        return Board.query.filter_by(user_id=user_id).order_by(Board.updated_at.desc()).all()
 
     @staticmethod
     def find_board_by_id(board_id: str):
