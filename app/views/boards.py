@@ -102,12 +102,23 @@ def get_dashboard(article_num: int):
 
     for board in boards:
         articles = Article.get_recent_articles_by_board(board.id, article_num)
+        ret_article = []
+
+        for article in articles:
+            ret_article.append({
+                'uuid': article.uuid,
+                'title': article.title,
+                'content': article.content,
+                'created_at': article.created_at,
+                'updated_at': article.updated_at
+            })
+
         ret_boards.append({
-            "uuid": board.uuid,
-            "name": board.name,
-            "created_at": board.created_at,
-            "updated_at": board.updated_at,
-            "articles": articles
+            'uuid': board.uuid,
+            'name': board.name,
+            'created_at': board.created_at,
+            'updated_at': board.updated_at,
+            'articles': ret_article
         })
 
     return json_response({'boards': ret_boards}, 200)
