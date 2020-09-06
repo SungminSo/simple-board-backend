@@ -19,7 +19,8 @@ def board_views():
             ret_boards[board.name] = {
                 "uuid": board.uuid,
                 "name": board.name,
-                "created_at": board.created_at
+                "created_at": board.created_at,
+                "updated_at": board.updated_at
             }
 
         return json_response({'boards': ret_boards}, 200)
