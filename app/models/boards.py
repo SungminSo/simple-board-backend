@@ -16,7 +16,7 @@ class Board(db.Model):
     latest_article_idx = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime)
-    articles = db.relationship('articles', backref='board', lazy=True)
+    articles = db.relationship('Article', backref='board', lazy=True)
 
     def __init__(self, name: str, user_id: int):
         self.uuid = str(uuid.uuid4())

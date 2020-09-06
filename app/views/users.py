@@ -1,4 +1,5 @@
 from flask import request, Blueprint
+from marshmallow import Schema
 from . import json_response
 from ..models.users import User, UserSchema
 from ..models.logout import Logout
@@ -13,9 +14,10 @@ def sign_up():
     if not request.method == 'POST':
         return json_response({'errorMsg': 'invalid method'}, 405)
 
-    email = request.form.get('email')
-    username = request.form.get('username')
-    password = request.form.get('password')
+    req_data = request.get_json()
+    email = req_data['email']
+    username = req_data['username']
+    password = req_data['password']
 
     user_already_exists = User.find_user_by_email(email)
     if user_already_exists:
@@ -24,7 +26,8 @@ def sign_up():
     user = User(
         email=email,
         username=username,
-        password=password
+        password=password,
+        is_admin=False
     )
     user_uuid = user.save()
 

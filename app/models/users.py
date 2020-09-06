@@ -17,8 +17,8 @@ class User(db.Model):
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean)
     created_at = db.Column(db.DateTime)
-    boards = db.relationship('boards', backref='user', lazy=True)
-    articles = db.relationship('articles', backref='user', lazy=True)
+    boards = db.relationship('Board', backref='user', lazy=True)
+    articles = db.relationship('Article', backref='user', lazy=True)
 
     def __init__(self, email: str, username: str, password: str, is_admin: bool):
         self.uuid = str(uuid.uuid4())
@@ -66,7 +66,7 @@ class User(db.Model):
 
     @staticmethod
     def find_user_by_email(user_email: str):
-        return User.query.get(user_email)
+        return User.query.filter_by(email=user_email).first()
 
 
 class UserSchema(Schema):
