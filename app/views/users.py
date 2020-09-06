@@ -19,6 +19,8 @@ def sign_up():
         email = req_data['email']
         username = req_data['username']
         password = req_data['password']
+    except TypeError:
+        return json_response({'errorMsg': 'please send request data'}, 400)
     except KeyError:
         return json_response({'errorMsg': 'please check your request data'}, 400)
 
@@ -46,6 +48,8 @@ def log_in():
         req_data = request.get_json()
         email = req_data['email']
         password = req_data['password']
+    except TypeError:
+        return json_response({'errorMsg': 'please send request data'}, 400)
     except KeyError:
         return json_response({'errorMsg': 'please check your request data'}, 400)
 
