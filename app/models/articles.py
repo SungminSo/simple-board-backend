@@ -56,6 +56,10 @@ class Article(db.Model):
         return Article.query.filter_by(board_id=board_id).all()
 
     @staticmethod
+    def get_recent_articles_by_board(board_id: str, article_num: int):
+        return Article.query.filter_by(board_id=board_id).order_by(Article.updated_at.desc()).limit(article_num).all()
+
+    @staticmethod
     def find_article_by_id(article_id: str):
         return Article.query.get(article_id)
 

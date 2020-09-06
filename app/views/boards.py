@@ -92,3 +92,22 @@ def delete_board(uuid: str):
         article.delete()
     board.delete()
     return json_response({}, 204)
+
+
+@board_api.route('/dashboard/<int:article_num>/', methods=['GET'])
+@Auth.token_required
+def get_dashboard(article_num: int):
+    boards = Board.get_all_boards()
+    ret_boards = []
+
+    for board in boards:
+        articles = Article.get_recent_articles_by_board(board.id, article_num)
+        ret_boards.append({
+            "uuid": board.uuid,
+            "name": board.name,
+            "created_at": board.created_at,
+            "updated_at": board.updated_at,
+            "articles": articles
+        })
+
+    return json_response({'boards': ret_boards}, 200)
