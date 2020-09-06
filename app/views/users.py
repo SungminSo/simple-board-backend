@@ -1,5 +1,4 @@
 from flask import request, Blueprint
-from marshmallow import Schema
 from . import json_response
 from ..models.users import User, UserSchema
 from ..models.logout import Logout
@@ -39,8 +38,9 @@ def log_in():
     if not request.method == 'POST':
         return json_response({'errorMsg': 'invalid method'}, 405)
 
-    email = request.form.get('email')
-    password = request.form.get('password')
+    req_data = request.get_json()
+    email = req_data['email']
+    password = req_data['password']
 
     if len(email) == 0 or len(password) == 0:
         return json_response({'errorMsg': 'please check your email and password'}, 400)

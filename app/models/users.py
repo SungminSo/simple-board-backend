@@ -62,7 +62,7 @@ class User(db.Model):
 
     @staticmethod
     def find_user_by_uuid(user_uuid: str):
-        return User.query.get(user_uuid)
+        return User.query.filter_by(uuid=user_uuid).first()
 
     @staticmethod
     def find_user_by_email(user_email: str):
