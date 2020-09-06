@@ -1,19 +1,15 @@
 from flask import request, Blueprint
 
 from . import json_response
-from ..models.users import User, UserSchema
+from ..models.users import User
 from ..models.logout import Logout
 from ..shared.auth import Auth
 
 user_api = Blueprint('user', __name__)
-user_schema = UserSchema
 
 
 @user_api.route("/sign-up", methods=['POST'])
 def sign_up():
-    if not request.method == 'POST':
-        return json_response({'errorMsg': 'invalid method'}, 405)
-
     try:
         req_data = request.get_json()
         email = req_data['email']
@@ -23,6 +19,9 @@ def sign_up():
         return json_response({'errorMsg': 'please send request data'}, 400)
     except KeyError:
         return json_response({'errorMsg': 'please check your request data'}, 400)
+
+    if len(email) == 0 or len(username) == 0 or len(password) == 0:
+        return json_response({'errorMsg': 'please check your email, username and password'}, 400)
 
     user_already_exists = User.find_user_by_email(email)
     if user_already_exists:
@@ -41,9 +40,6 @@ def sign_up():
 
 @user_api.route("/log-in", methods=['POST'])
 def log_in():
-    if not request.method == 'POST':
-        return json_response({'errorMsg': 'invalid method'}, 405)
-
     try:
         req_data = request.get_json()
         email = req_data['email']
@@ -74,9 +70,6 @@ def log_in():
 @user_api.route("/log-out", methods=['PATCH'])
 @Auth.token_required
 def log_out():
-    if not request.method == 'PATCH':
-        return json_response({'errorMsg': 'invalid method'}, 405)
-
     auth_token = request.headers.get('Authorization')
     token = auth_token.split(" ")[1]
 

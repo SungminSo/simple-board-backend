@@ -1,12 +1,11 @@
 from flask import request, Blueprint, g
 
 from . import json_response
-from ..models.boards import Board, BoardSchema
+from ..models.boards import Board
 from ..models.articles import Article
 from ..shared.auth import Auth
 
 board_api = Blueprint('board', __name__)
-board_schema = BoardSchema
 
 
 @board_api.route('/board/<int:limit>/boards/<int:page>', methods=['GET'])
