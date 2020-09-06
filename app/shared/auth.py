@@ -64,12 +64,12 @@ class Auth:
 
             already_logout = Logout.check_logout(token)
             if already_logout:
-                abort(401, {'errorMsg': 'already log-out. please log-in again'})
+                abort(400, {'errorMsg': 'already log-out. please log-in again'})
 
             user_uuid = data['data']['uuid']
             check_user = User.find_user_by_uuid(user_uuid)
             if not check_user:
-                abort(401, {'error': 'user does not exist'})
+                abort(404, {'error': 'user does not exist'})
             if check_user.email != data['data']['email']:
                 abort(401, {'error': 'wrong email'})
 
