@@ -1,6 +1,7 @@
-from flask import request, json, Blueprint
+from flask import request, Blueprint
 from . import json_response
 from ..models.users import User, UserSchema
+from ..shared.auth import Auth
 
 user_api = Blueprint('user', __name__)
 user_schema = UserSchema
@@ -15,8 +16,8 @@ def sign_up():
     username = request.form.get('username')
     password = request.form.get('password')
 
-    already_exist_user = User.find_user_by_email(email)
-    if already_exist_user:
+    user_already_exists = User.find_user_by_email(email)
+    if user_already_exists:
         return json_response({'errorMsg': 'user already exists'}, 409)
 
     user = User(
@@ -26,5 +27,7 @@ def sign_up():
     )
     user_uuid = user.save()
 
-    return json_response({'uuid': user_uuid}, 201)
+    token = Auth.generate_user_token(user_uuid, email)
+
+    return json_response({'token': token}, 201)
 

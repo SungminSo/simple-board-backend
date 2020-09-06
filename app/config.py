@@ -23,6 +23,7 @@ class DevelopmentConfig(Config):
     POSTGRES_DB_NAME = get_env_variable("POSTGRES_DB_NAME")
     POSTGRES_PASSWORD = get_env_variable("POSTGRES_PASSWORD")
     SQLALCHEMY_DATABASE_URI = f"postgres://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB_NAME}"
+    USER_JWT_SECRET_KEY = get_env_variable("USER_JWT_SECRET_KEY")
 
 
 class TestConfig(Config):
@@ -35,6 +36,7 @@ class TestConfig(Config):
     POSTGRES_DB_NAME = get_env_variable("POSTGRES_DB_NAME")
     POSTGRES_PASSWORD = get_env_variable("POSTGRES_PASSWORD")
     SQLALCHEMY_DATABASE_URI = f"postgres://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB_NAME}"
+    USER_JWT_SECRET_KEY = get_env_variable("USER_JWT_SECRET_KEY")
 
 
 class ProductionConfig(Config):
@@ -44,6 +46,7 @@ class ProductionConfig(Config):
     POSTGRES_DB_NAME = get_env_variable("POSTGRES_DB_NAME")
     POSTGRES_PASSWORD = get_env_variable("POSTGRES_PASSWORD")
     SQLALCHEMY_DATABASE_URI = f"postgres://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB_NAME}"
+    USER_JWT_SECRET_KEY = get_env_variable("USER_JWT_SECRET_KEY")
 
 
 config_by_name = dict(
