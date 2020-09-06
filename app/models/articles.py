@@ -15,6 +15,7 @@ class Article(db.Model):
     board_id = db.Column(db.Integer, db.ForeignKey('board.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime)
+    updated_at = db.Column(db.DateTime)
 
     def __init__(self, title: str, content: str, board_id: int, user_id: int):
         self.uuid = str(uuid.uuid4())
@@ -23,6 +24,7 @@ class Article(db.Model):
         self.board_id = board_id
         self.user_id = user_id
         self.created_at = datetime.utcnow()
+        self.updated_at = datetime.utcnow()
 
     def __repr__(self) -> str:
         return f"<article: {self.title}, uuid: {self.uuid}"
@@ -37,6 +39,7 @@ class Article(db.Model):
             setattr(self, 'title', new_title)
         if self.content != new_content:
             setattr(self, 'content', new_content)
+        self.updated_at = datetime.utcnow()
         db.session.commit()
         return self.uuid
 
@@ -69,3 +72,4 @@ class ArticleSchema(Schema):
     board_id = fields.Int(required=True)
     user_id = fields.Int(required=True)
     created_at = fields.DateTime(required=True)
+    updated_at = fields.DateTime(dump_only=True)

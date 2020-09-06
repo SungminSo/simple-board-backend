@@ -5,6 +5,7 @@ from .models import db, bcrypt
 
 from .views.users import user_api
 from .views.boards import board_api
+from .views.articles import article_api
 
 
 def create_app(config_name: str) -> Flask:
@@ -23,5 +24,6 @@ def create_app(config_name: str) -> Flask:
 
     app.register_blueprint(user_api, url_prefix='/api/v1')
     app.register_blueprint(board_api, url_prefix='/api/v1')
+    app.register_blueprint(article_api, url_prefix='/api/v1')
 
     return app

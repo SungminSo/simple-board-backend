@@ -1,6 +1,6 @@
 from datetime import datetime
 from marshmallow import fields, Schema
-from . import db
+from . import db, MutableList
 from .articles import ArticleSchema
 
 import uuid
@@ -12,7 +12,7 @@ class Board(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     uuid = db.Column(db.String(128), unique=True, nullable=False)
     name = db.Column(db.String(128), unique=True, nullable=False)
-    latest_article = db.Column(db.ARRAY(db.String))
+    latest_article = db.Column(MutableList.as_mutable(db.ARRAY(db.String)))
     latest_article_idx = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime)
@@ -22,6 +22,7 @@ class Board(db.Model):
     def __init__(self, name: str, user_id: int):
         self.uuid = str(uuid.uuid4())
         self.name = name
+        self.latest_article = []
         self.latest_article_idx = -1
         self.user_id = user_id
         self.created_at = datetime.utcnow()
@@ -44,9 +45,11 @@ class Board(db.Model):
 
     def update_latest_article(self, article_uuid: str):
         self.latest_article_idx += 1
-        self.latest_article[self.latest_article_idx] = article_uuid
-        setattr(self, 'latest_article_idx', self.latest_article_idx)
-        setattr(self, 'latest_article', self.latest_article)
+        if self.latest_article_idx > 10:
+            self.latest_article_idx = self.latest_article_idx % 10
+            self.latest_article[self.latest_article_idx] = article_uuid
+        else:
+            self.latest_article.append(article_uuid)
         db.session.commit()
 
     def delete(self):
