@@ -53,7 +53,7 @@ class Article(db.Model):
 
     @staticmethod
     def get_articles_by_board(board_id: str):
-        return Article.query.filter_by(board_id=board_id).all()
+        return Article.query.filter_by(board_id=board_id).order_by(Article.updated_at.desc()).all()
 
     @staticmethod
     def get_recent_articles_by_board(board_id: str, article_num: int):

@@ -16,10 +16,10 @@ def get_boards(limit: int, page: int):
 
     for board in boards[limit * (page-1):limit * page]:
         ret_boards.append({
-            "uuid": board.uuid,
-            "name": board.name,
-            "created_at": board.created_at,
-            "updated_at": board.updated_at
+            'uuid': board.uuid,
+            'name': board.name,
+            'created_at': board.created_at,
+            'updated_at': board.updated_at
         })
 
     return json_response({'total': len(boards), 'boards': ret_boards}, 200)
@@ -99,7 +99,7 @@ def delete_board(uuid: str):
     return json_response({}, 204)
 
 
-@board_api.route('/dashboard/<int:article_num>/', methods=['GET'])
+@board_api.route('/dashboard/<int:article_num>', methods=['GET'])
 @Auth.token_required
 def get_dashboard(article_num: int):
     boards = Board.get_all_boards()
