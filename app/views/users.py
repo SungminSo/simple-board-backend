@@ -49,6 +49,8 @@ def log_in():
     if not user.check_password(password):
         return json_response({'errorMsg': 'invalid password'}, 400)
 
-    token = Auth.generate_user_token(user.uuid, user.email)
-
-    return json_response({'token': token}, 200)
+    result = Auth.generate_user_token(user.uuid, user.email)
+    if not result['data']:
+        return json_response(result['error'], 500)
+    else:
+        return json_response(result['data'], 200)

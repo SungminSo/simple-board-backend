@@ -7,7 +7,8 @@ import os
 
 class Auth:
     @staticmethod
-    def generate_user_token(user_uuid: str, user_email: str) -> str:
+    def generate_user_token(user_uuid: str, user_email: str) -> dict:
+        result = {'data': {}, 'error': {}}
         try:
             payload = {
                 'exp': datetime.utcnow() + timedelta(days=1),
@@ -15,17 +16,18 @@ class Auth:
                 'email': user_email,
                 'uuid': user_uuid
             }
-            return jwt.encode(
+
+            token = jwt.encode(
                 payload=payload,
                 key=os.getenv('USER_JWT_SECRET_KEY'),
                 algorithm='HS256'
             ).decode('utf-8')
-        except Exception as e:
-            return Response(
-                mimetype='application/json',
-                response=json.dumps({'errorMsg': 'error in generating user token'}),
-                status=500
-            )
+
+            result['data'] = {'token': token}
+            return result
+        except Exception:
+            result['error'] = {'errorMsg': 'error in generating user token'}
+            return result
 
     @staticmethod
     def decode_user_token(token: str) -> dict:
