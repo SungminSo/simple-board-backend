@@ -16,6 +16,7 @@ class Board(db.Model):
     latest_article_idx = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime)
+    updated_at = db.Column(db.DateTime)
     articles = db.relationship('Article', backref='board', lazy=True)
 
     def __init__(self, name: str, user_id: int):
@@ -24,6 +25,7 @@ class Board(db.Model):
         self.latest_article_idx = -1
         self.user_id = user_id
         self.created_at = datetime.utcnow()
+        self.updated_at = datetime.utcnow()
 
     def __repr__(self) -> str:
         return f"<board: {self.name}, uuid: {self.uuid}"
@@ -36,6 +38,7 @@ class Board(db.Model):
     def update(self, new_name: str) -> str:
         if self.name != new_name:
             setattr(self, 'name', new_name)
+        self.updated_at = datetime.utcnow()
         db.session.commit()
         return self.uuid
 
@@ -79,4 +82,5 @@ class BoardSchema(Schema):
     latest_article_idx = fields.Int(dump_only=True)
     user_id = fields.Int(required=True)
     created_at = fields.DateTime(required=True)
+    updated_at = fields.DateTime(dump_only=True)
     articles = fields.Nested(ArticleSchema, many=True)

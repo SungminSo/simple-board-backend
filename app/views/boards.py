@@ -8,7 +8,7 @@ board_api = Blueprint('board', __name__)
 board_schema = BoardSchema
 
 
-@board_api.route("/board", methods=['GET', 'POST'])
+@board_api.route("/board", methods=['GET', 'POST', 'PATCH'])
 @Auth.token_required
 def board_views():
     if request.method == 'GET':
@@ -23,6 +23,7 @@ def board_views():
             }
 
         return json_response({'boards': ret_boards}, 200)
+
     elif request.method == 'POST':
         try:
             req_data = request.get_json()
@@ -46,5 +47,25 @@ def board_views():
 
         return json_response({'uuid': board_uuid}, 201)
 
+    elif request.method == 'PATCH':
+        try:
+            req_data = request.get_json()
+            uuid = req_data['uuid']
+            new_name = req_data['new_name']
+        except TypeError:
+            return json_response({'errorMsg': 'please send request data'}, 400)
+        except KeyError:
+            return json_response({'errorMsg': 'please check your request data'}, 400)
+
+        board = Board.find_board_by_uuid(uuid)
+        if not board:
+            return json_response({'errorMsg': 'board does not exist'}, 404)
+
+        user_id = g.user['id']
+        if board.user_id != user_id:
+            return json_response({'errorMsg': 'permission denied'}, 403)
+
+        board_uuid = board.update(new_name)
+        return json_response({'uuid': board_uuid}, 200)
 
 
