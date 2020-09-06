@@ -24,7 +24,7 @@ class Article(db.Model):
         self.user_id = user_id
         self.created_at = datetime.utcnow()
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f"<article: {self.title}, uuid: {self.uuid}"
 
     def save(self) -> str:

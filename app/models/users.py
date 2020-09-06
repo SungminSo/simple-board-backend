@@ -28,7 +28,7 @@ class User(db.Model):
         self.is_admin = is_admin
         self.created_at = datetime.utcnow()
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f"<user: {self.email}, uuid: {self.uuid}"
 
     def check_password(self, password: str) -> bool:

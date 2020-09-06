@@ -8,10 +8,16 @@ board_api = Blueprint('board', __name__)
 board_schema = BoardSchema
 
 
-@board_api.route("/board", methods=['POST'])
+@board_api.route("/board", methods=['GET', 'POST'])
 @Auth.token_required
 def board_views():
-    if request.method == 'POST':
+    if request.method == 'GET':
+        boards = Board.get_all_boards()
+        #
+        print(boards)
+        #
+        return json_response(boards, 200)
+    elif request.method == 'POST':
         try:
             req_data = request.get_json()
             name = req_data['name']

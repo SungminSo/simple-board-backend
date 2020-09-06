@@ -25,7 +25,7 @@ class Board(db.Model):
         self.user_id = user_id
         self.created_at = datetime.utcnow()
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f"<board: {self.name}, uuid: {self.uuid}"
 
     def save(self) -> str:

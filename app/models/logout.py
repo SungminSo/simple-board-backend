@@ -13,7 +13,7 @@ class Logout(db.Model):
         self.token = token
         self.logout_at = datetime.utcnow()
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f"<token: {self.token}"
 
     def save(self) -> datetime:
