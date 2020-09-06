@@ -1,5 +1,8 @@
 from datetime import datetime, timedelta
-from flask import json, Response
+from flask import request, json, Response, g
+from functools import wraps
+from ..models.users import User
+from ..models.logout import Logout
 
 import jwt
 import os
@@ -43,3 +46,54 @@ class Auth:
         except jwt.InvalidTokenError:
             result['error'] = {'errorMsg': 'invalid token'}
             return result
+
+    # decorator
+    @staticmethod
+    def token_required(func):
+
+        @wraps(func)
+        def decorated_auth(*args, **kwargs):
+            if 'Authorization' not in request.headers:
+                return Response(
+                    mimetype="application/json",
+                    response=json.dumps({'errorMsg': 'authentication token is not available'}),
+                    status=401
+                )
+
+            authorization = request.headers.get('Authorization')
+            token = authorization.split(" ")[1]
+            data = Auth.decode_user_token(token)
+            if data['error']:
+                return Response(
+                    mimetype="application/json",
+                    response=json.dumps(data['error']),
+                    status=401
+                )
+
+            valid = Logout.check_logout(token)
+            if not valid:
+                return Response(
+                    mimetype="application/json",
+                    response=json.dumps({'errorMsg': 'already log-out. please log-in again'}),
+                    status=401
+                )
+
+            user_uuid = data['data']['uuid']
+            check_user = User.find_user_by_uuid(user_uuid)
+            if not check_user:
+                return Response(
+                    mimetype="application/json",
+                    response=json.dumps({'error': 'user does not exist'}),
+                    status=401
+                )
+            if check_user.email != data['data']['email']:
+                return Response(
+                    mimetype="application/json",
+                    response=json.dumps({'error': 'wrong email'}),
+                    status=401
+                )
+
+            g.user = {'uuid': user_uuid}
+            return func(*args, **kwargs)
+
+        return decorated_auth

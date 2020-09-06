@@ -1,6 +1,7 @@
 from flask import request, Blueprint
 from . import json_response
 from ..models.users import User, UserSchema
+from ..models.logout import Logout
 from ..shared.auth import Auth
 
 user_api = Blueprint('user', __name__)
@@ -54,3 +55,20 @@ def log_in():
         return json_response(result['error'], 500)
     else:
         return json_response(result['data'], 200)
+
+
+@user_api.route("/log-out", methods=['PATCH'])
+@Auth.token_required
+def log_out():
+    if not request.method == 'PATCH':
+        return json_response({'errorMsg': 'invalid method'}, 405)
+
+    auth_token = request.headers.get('Authorization')
+    token = auth_token.split(" ")[1]
+
+    logout = Logout(token)
+    logout_at = logout.save()
+
+    json_response({'logout_at': logout_at}, 200)
+
+

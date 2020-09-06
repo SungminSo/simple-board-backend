@@ -16,6 +16,11 @@ class Logout(db.Model):
     def __str__(self) -> str:
         return f"<token: {self.token}"
 
+    def save(self) -> datetime:
+        db.session.add(self)
+        db.session.commit()
+        return self.logout_at
+
     @staticmethod
     def check_logout(token: str) -> bool:
         # check whether token has been log-out
