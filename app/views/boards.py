@@ -28,7 +28,7 @@ def get_boards(limit: int, page: int):
 
 @board_api.route('/board', methods=['POST'])
 @Auth.token_required
-def create_boards():
+def create_board():
     try:
         req_data = request.get_json()
         name = req_data['name']
@@ -76,9 +76,9 @@ def update_board():
     return json_response({'uuid': board_uuid}, 200)
 
 
-@board_api.route('/board/<str:uuid>', methods=['DELETE'])
+@board_api.route('/board/<string:uuid>', methods=['DELETE'])
 @Auth.token_required
-def delete_board(uuid):
+def delete_board(uuid: str):
     board = Board.find_board_by_uuid(uuid)
     if not board:
         return json_response({'errorMsg': 'board does not exist'}, 404)
@@ -92,6 +92,3 @@ def delete_board(uuid):
         article.delete()
     board.delete()
     return json_response({}, 204)
-
-
-
