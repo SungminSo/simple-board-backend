@@ -13,10 +13,16 @@ board_schema = BoardSchema
 def board_views():
     if request.method == 'GET':
         boards = Board.get_all_boards()
-        #
-        print(boards)
-        #
-        return json_response(boards, 200)
+        ret_boards = {}
+
+        for board in boards:
+            ret_boards[board.name] = {
+                "uuid": board.uuid,
+                "name": board.name,
+                "created_at": board.created_at
+            }
+
+        return json_response({'boards': ret_boards}, 200)
     elif request.method == 'POST':
         try:
             req_data = request.get_json()
