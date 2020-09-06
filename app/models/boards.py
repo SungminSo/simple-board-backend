@@ -11,7 +11,7 @@ class Board(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     uuid = db.Column(db.String(128), unique=True, nullable=False)
-    name = db.Column(db.String(128), nullable=False)
+    name = db.Column(db.String(128), unique=True, nullable=False)
     latest_article = db.Column(db.ARRAY(db.String))
     latest_article_idx = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
