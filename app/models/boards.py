@@ -66,6 +66,10 @@ class Board(db.Model):
     def find_board_by_uuid(board_uuid: str):
         return Board.query.filter_by(uuid=board_uuid).first()
 
+    @staticmethod
+    def find_board_by_name(board_name: str):
+        return Board.query.filter_by(name=board_name).first()
+
 
 class BoardSchema(Schema):
     id = fields.Int(dump_only=True)

@@ -1,4 +1,5 @@
 from flask import request, Blueprint
+
 from . import json_response
 from ..models.users import User, UserSchema
 from ..models.logout import Logout

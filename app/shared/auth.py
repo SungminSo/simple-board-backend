@@ -73,7 +73,7 @@ class Auth:
             if check_user.email != data['data']['email']:
                 abort(401, {'error': 'wrong email'})
 
-            g.user = {'uuid': user_uuid}
+            g.user = {'id': check_user.id, 'uuid': check_user.uuid}
             return func(*args, **kwargs)
 
         return decorated_auth
