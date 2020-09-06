@@ -8,7 +8,7 @@ from ..shared.auth import Auth
 article_api = Blueprint('article', __name__)
 
 
-@article_api.route("/article", methods=['GET', 'POST'])
+@article_api.route("/article", methods=['GET', 'POST', 'PATCH'])
 @Auth.token_required
 def article_views():
     if request.method == 'GET':
@@ -64,3 +64,25 @@ def article_views():
         board.update_latest_article(article_uuid)
 
         return json_response({'uuid': article_uuid}, 201)
+
+    elif request.method == 'PATCH':
+        try:
+            req_data = request.get_json()
+            uuid = req_data['uuid']
+            new_title = req_data['new_title']
+            new_content = req_data['new_content']
+        except TypeError:
+            return json_response({'errorMsg': 'please send request data'}, 400)
+        except KeyError:
+            return json_response({'errorMsg': 'please check your request data'}, 400)
+
+        article = Article.find_article_by_uuid(uuid)
+        if not article:
+            return json_response({'errorMsg': 'article does not exist'}, 404)
+
+        user_id = g.user['id']
+        if article.user_id != user_id:
+            return json_response({'errorMsg': 'permission denied'}, 403)
+
+        article_uuid = article.update(new_title, new_content)
+        return json_response({'uuid': article_uuid}, 200)
