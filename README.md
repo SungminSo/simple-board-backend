@@ -4,7 +4,7 @@
 - local
     1. git clone https://github.com/SungminSo/simple-board-backend.git
     1. set all of environments
-    1. ``` python3 manage.py run ```
+    1. ``` python3 manage.py run ``` or ``` make run ```
     1. expected 
         ``` 
         * Serving Flask app "app" (lazy loading)
@@ -13,6 +13,16 @@
         * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
         
        ```
+       
+### How to install packages
+```
+make install
+```
+or
+``` 
+make install-dev
+```
+
        
 ### Env
 |key                |value           |
