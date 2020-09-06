@@ -58,7 +58,7 @@ class Article(db.Model):
 
     @staticmethod
     def find_article_by_uuid(article_uuid: str):
-        return Article.query.get(article_uuid)
+        return Article.query.filter_by(uuid=article_uuid).first()
 
 
 class ArticleSchema(Schema):
