@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from flask import request, json, Response, g
+from flask import request, json, Response, g, abort
 from functools import wraps
 from ..models.users import User
 from ..models.logout import Logout
@@ -54,44 +54,24 @@ class Auth:
         @wraps(func)
         def decorated_auth(*args, **kwargs):
             if 'Authorization' not in request.headers:
-                return Response(
-                    mimetype="application/json",
-                    response=json.dumps({'errorMsg': 'authentication token is not available'}),
-                    status=401
-                )
+                abort(401, {'errorMsg': 'authentication token is not available'})
 
             authorization = request.headers.get('Authorization')
             token = authorization.split(" ")[1]
             data = Auth.decode_user_token(token)
             if data['error']:
-                return Response(
-                    mimetype="application/json",
-                    response=json.dumps(data['error']),
-                    status=401
-                )
+                abort(401, data['error'])
 
-            valid = Logout.check_logout(token)
-            if not valid:
-                return Response(
-                    mimetype="application/json",
-                    response=json.dumps({'errorMsg': 'already log-out. please log-in again'}),
-                    status=401
-                )
+            already_logout = Logout.check_logout(token)
+            if already_logout:
+                abort(401, {'errorMsg': 'already log-out. please log-in again'})
 
             user_uuid = data['data']['uuid']
             check_user = User.find_user_by_uuid(user_uuid)
             if not check_user:
-                return Response(
-                    mimetype="application/json",
-                    response=json.dumps({'error': 'user does not exist'}),
-                    status=401
-                )
+                abort(401, {'error': 'user does not exist'})
             if check_user.email != data['data']['email']:
-                return Response(
-                    mimetype="application/json",
-                    response=json.dumps({'error': 'wrong email'}),
-                    status=401
-                )
+                abort(401, {'error': 'wrong email'})
 
             g.user = {'uuid': user_uuid}
             return func(*args, **kwargs)
