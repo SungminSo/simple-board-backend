@@ -64,6 +64,10 @@ class User(db.Model):
     def find_user_by_uuid(user_uuid: str):
         return User.query.get(user_uuid)
 
+    @staticmethod
+    def find_user_by_email(user_email: str):
+        return User.query.get(user_email)
+
 
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
