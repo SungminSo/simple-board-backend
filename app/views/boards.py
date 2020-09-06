@@ -36,6 +36,9 @@ def create_board():
     except KeyError:
         return json_response({'errorMsg': 'please check your request data'}, 400)
 
+    if len(name) == 0:
+        return json_response({'errorMsg': 'please check board name'}, 400)
+
     board_already_exists = Board.find_board_by_name(name)
     if board_already_exists:
         return json_response({'errorMsg': 'board already exists'}, 409)
@@ -62,6 +65,9 @@ def update_board():
         return json_response({'errorMsg': 'please send request data'}, 400)
     except KeyError:
         return json_response({'errorMsg': 'please check your request data'}, 400)
+
+    if len(new_name) == 0:
+        return json_response({'errorMsg': 'please check board name'}, 400)
 
     board = Board.find_board_by_uuid(uuid)
     if not board:
