@@ -8,7 +8,7 @@ board_api = Blueprint('board', __name__)
 board_schema = BoardSchema
 
 
-@board_api.route("/board", methods=['GET', 'POST', 'PATCH'])
+@board_api.route("/board", methods=['GET', 'POST', 'PATCH', 'DELETE'])
 @Auth.token_required
 def board_views():
     if request.method == 'GET':
@@ -68,5 +68,25 @@ def board_views():
 
         board_uuid = board.update(new_name)
         return json_response({'uuid': board_uuid}, 200)
+
+    elif request.method == 'DELETE':
+        try:
+            req_data = request.get_json()
+            uuid = req_data['uuid']
+        except TypeError:
+            return json_response({'errorMsg': 'please send request data'}, 400)
+        except KeyError:
+            return json_response({'errorMsg': 'please check your request data'}, 400)
+
+        board = Board.find_board_by_uuid(uuid)
+        if not board:
+            return json_response({'errorMsg': 'board does not exist'}, 404)
+
+        user_id = g.user['id']
+        if board.user_id != user_id:
+            return json_response({'errorMsg': 'permission denied'}, 403)
+
+        board.delete()
+        return json_response({}, 204)
 
 
