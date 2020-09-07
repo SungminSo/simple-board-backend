@@ -35,6 +35,7 @@ make install-dev
 |USER_JWT_SECRET_KEY|qwerasdfzxcv1234|
 
 ### API
+Postman: <a href="https://documenter.getpostman.com/view/4736816/TVCiT6Jd">Docs</a>\
 Wiki: <a href="https://github.com/SungminSo/simple-board-backend/wiki/API-List">API List</a>
 
 ### DB
