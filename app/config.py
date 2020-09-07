@@ -24,6 +24,9 @@ class DevelopmentConfig(Config):
     POSTGRES_PASSWORD = get_env_variable("POSTGRES_PASSWORD")
     SQLALCHEMY_DATABASE_URI = f"postgres://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB_NAME}"
     USER_JWT_SECRET_KEY = get_env_variable("USER_JWT_SECRET_KEY")
+    CORS_ORIGINS = get_env_variable("CORS_ORIGINS")
+    CORS_METHODS = get_env_variable("CORS_METHODS")
+    CORS_HEADERS = get_env_variable("CORS_HEADERS")
 
 
 class TestConfig(Config):
@@ -37,6 +40,9 @@ class TestConfig(Config):
     POSTGRES_PASSWORD = get_env_variable("POSTGRES_PASSWORD")
     SQLALCHEMY_DATABASE_URI = f"postgres://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB_NAME}"
     USER_JWT_SECRET_KEY = get_env_variable("USER_JWT_SECRET_KEY")
+    CORS_ORIGINS = get_env_variable("CORS_ORIGINS")
+    CORS_METHODS = get_env_variable("CORS_METHODS")
+    CORS_HEADERS = get_env_variable("CORS_HEADERS")
 
 
 class ProductionConfig(Config):
@@ -47,6 +53,9 @@ class ProductionConfig(Config):
     POSTGRES_PASSWORD = get_env_variable("POSTGRES_PASSWORD")
     SQLALCHEMY_DATABASE_URI = f"postgres://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB_NAME}"
     USER_JWT_SECRET_KEY = get_env_variable("USER_JWT_SECRET_KEY")
+    CORS_ORIGINS = get_env_variable("CORS_ORIGINS")
+    CORS_METHODS = get_env_variable("CORS_METHODS")
+    CORS_HEADERS = get_env_variable("CORS_HEADERS")
 
 
 config_by_name = dict(

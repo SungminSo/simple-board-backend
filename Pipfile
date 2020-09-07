@@ -17,6 +17,7 @@ marshmallow = "*"
 flask-script = "*"
 pyjwt = "*"
 flake8 = "*"
+flask-cors = "*"
 
 [requires]
 python_version = "3.8"
