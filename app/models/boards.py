@@ -1,6 +1,6 @@
 from datetime import datetime
 from marshmallow import fields, Schema
-from . import db, MutableList
+from . import db
 from .articles import ArticleSchema
 
 import uuid

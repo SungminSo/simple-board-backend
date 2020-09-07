@@ -77,5 +77,3 @@ def log_out():
     logout_at = logout.save()
 
     return json_response({'logout_at': logout_at}, 200)
-
-

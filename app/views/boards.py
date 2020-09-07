@@ -14,7 +14,7 @@ def get_boards(limit: int, page: int):
     boards = Board.get_all_boards()
     ret_boards = []
 
-    for board in boards[limit * (page-1):limit * page]:
+    for board in boards[limit * (page - 1):limit * page]:
         ret_boards.append({
             'uuid': board.uuid,
             'name': board.name,

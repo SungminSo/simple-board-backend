@@ -18,7 +18,7 @@ def get_articles(board: str, limit: int, page: int):
     articles = Article.get_articles_by_board(board.id)
     ret_articles = []
 
-    for article in articles[limit * (page-1):limit * page]:
+    for article in articles[limit * (page - 1):limit * page]:
         ret_articles.append({
             'uuid': article.uuid,
             'title': article.title,
