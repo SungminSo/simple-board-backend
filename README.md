@@ -33,6 +33,9 @@ make install-dev
 |POSTGRES_DB_NAME   |board           |
 |POSTGRES_PASSWORD  |password        |
 |USER_JWT_SECRET_KEY|qwerasdfzxcv1234|
+|CORS_ORIGINS       |*               |
+|CORS_METHODS       |GET,POST,PATCH,DELETE,OPTIONS|
+|CORS_HEADERS       |Origin,Authorization,Content-Type|
 
 ### API
 Postman: <a href="https://documenter.getpostman.com/view/4736816/TVCiT6Jd">Docs</a>\
