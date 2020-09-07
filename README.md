@@ -70,9 +70,13 @@ Wiki: <a href="https://github.com/SungminSo/simple-board-backend/wiki/DB-Models"
     - env.py
     - README
     - script.py.mako
+- .flake8
 - .gitignore
+- docker-compose.yml
+- Dockerfile
+- Makefile
 - manage.py
 - Pipfile
 - Pipfile.lock
-- READEM.md
+- README.md
 ```
