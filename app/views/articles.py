@@ -48,7 +48,7 @@ def create_article():
 
     board = Board.find_board_by_uuid(board_uuid)
     if not board:
-        return json_response({'errorMsg': 'board does not exist'})
+        return json_response({'errorMsg': 'board does not exist'}, 404)
 
     user_id = g.user['id']
 
