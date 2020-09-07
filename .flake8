@@ -1,0 +1,8 @@
+[flake8]
+ignore = E501
+exclude =
+	migrations/
+	manage.py
+import-order-style = appnexus
+application_import_names = app
+application_package_names = flask
