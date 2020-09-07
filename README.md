@@ -13,6 +13,17 @@
         * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
         
        ```
+- docker
+    1. git clone https://github.com/SungminSo/simple-board-backend.git
+    1. ``` make docker ```
+    1. expected 
+        ``` 
+        * Serving Flask app "app" (lazy loading)
+        * Environment: dev
+        * Debug mode: off
+        * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+        
+       ```
        
 ### How to install packages
 ```
