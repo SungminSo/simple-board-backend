@@ -16,6 +16,7 @@ psycopg2-binary = "*"
 marshmallow = "*"
 flask-script = "*"
 pyjwt = "*"
+flake8 = "*"
 
 [requires]
 python_version = "3.8"
