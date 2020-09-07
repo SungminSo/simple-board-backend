@@ -18,6 +18,7 @@ flask-script = "*"
 pyjwt = "*"
 flake8 = "*"
 flask-cors = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.8"
