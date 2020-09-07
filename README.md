@@ -33,6 +33,9 @@ make install-dev
 |POSTGRES_DB_NAME   |board           |
 |POSTGRES_PASSWORD  |password        |
 |USER_JWT_SECRET_KEY|qwerasdfzxcv1234|
+|CORS_ORIGINS       |*               |
+|CORS_METHODS       |GET,POST,PATCH,DELETE,OPTIONS|
+|CORS_HEADERS       |Origin,Authorization,Content-Type|
 
 ### API
 Postman: <a href="https://documenter.getpostman.com/view/4736816/TVCiT6Jd">Docs</a>\
@@ -67,9 +70,13 @@ Wiki: <a href="https://github.com/SungminSo/simple-board-backend/wiki/DB-Models"
     - env.py
     - README
     - script.py.mako
+- .flake8
 - .gitignore
+- docker-compose.yml
+- Dockerfile
+- Makefile
 - manage.py
 - Pipfile
 - Pipfile.lock
-- READEM.md
+- README.md
 ```
