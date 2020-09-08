@@ -29,19 +29,16 @@ class Board(db.Model):
 
     def save(self) -> str:
         db.session.add(self)
-        db.session.commit()
         return self.uuid
 
     def update(self, new_name: str) -> str:
         if self.name != new_name:
             setattr(self, 'name', new_name)
         self.updated_at = datetime.utcnow()
-        db.session.commit()
         return self.uuid
 
     def delete(self):
         db.session.delete(self)
-        db.session.commit()
 
     @staticmethod
     def get_all_boards():

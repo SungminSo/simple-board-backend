@@ -8,6 +8,10 @@ db = SQLAlchemy()
 bcrypt = Bcrypt()
 
 
+def db_commit():
+    db.session.commit()
+
+
 class MutableList(Mutable, list):
     def append(self, value):
         list.append(self, value)
