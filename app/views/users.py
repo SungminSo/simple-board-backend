@@ -37,6 +37,7 @@ def sign_up():
         password=password,
         is_admin=False
     )
+    # TODO: 레이스 컨디션 알아보고 핸들링
     user_uuid = user.save()
     db_commit()
 
