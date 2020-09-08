@@ -21,8 +21,11 @@ def sign_up():
     except KeyError:
         return json_response({'errorMsg': 'please check your request data'}, 400)
 
-    if len(email) == 0 or len(username) == 0 or len(password) == 0:
-        return json_response({'errorMsg': 'please check your email, username and password'}, 400)
+    try:
+        if len(email) == 0 or len(username) == 0 or len(password) == 0:
+            return json_response({'errorMsg': 'please check your email, username and password'}, 400)
+    except TypeError:
+        return json_response({'errorMsg': 'please check your email, username and password data type'}, 400)
 
     user_already_exists = User.find_user_by_email(email)
     if user_already_exists:
@@ -51,8 +54,11 @@ def log_in():
     except KeyError:
         return json_response({'errorMsg': 'please check your request data'}, 400)
 
-    if len(email) == 0 or len(password) == 0:
-        return json_response({'errorMsg': 'please check your email and password'}, 400)
+    try:
+        if len(email) == 0 or len(password) == 0:
+            return json_response({'errorMsg': 'please check your email, username and password'}, 400)
+    except TypeError:
+        return json_response({'errorMsg': 'please check your email, username and password data type'}, 400)
 
     user = User.find_user_by_email(email)
 
