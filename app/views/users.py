@@ -1,6 +1,7 @@
 from flask import request, Blueprint
 
 from . import json_response
+from ..models import db_commit
 from ..models.users import User
 from ..models.logout import Logout
 from ..shared.auth import Auth
@@ -34,6 +35,7 @@ def sign_up():
         is_admin=False
     )
     user_uuid = user.save()
+    db_commit()
 
     return json_response({'uuid': user_uuid}, 201)
 
@@ -75,5 +77,6 @@ def log_out():
 
     logout = Logout(token)
     logout_at = logout.save()
+    db_commit()
 
     return json_response({'logout_at': logout_at}, 200)
