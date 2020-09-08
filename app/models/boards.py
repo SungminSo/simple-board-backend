@@ -13,8 +13,8 @@ class Board(db.Model):
     uuid = db.Column(db.String(128), unique=True, nullable=False)
     name = db.Column(db.String(128), unique=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    created_at = db.Column(db.DateTime)
-    updated_at = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, nullable=False)
+    updated_at = db.Column(db.DateTime, nullable=False)
     articles = db.relationship('Article', backref='board', lazy=True)
 
     def __init__(self, name: str, user_id: int):
