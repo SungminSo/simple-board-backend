@@ -15,8 +15,8 @@ class User(db.Model):
     email = db.Column(db.String(128), unique=True, nullable=False)
     name = db.Column(db.String(128), nullable=False)
     password = db.Column(db.String(128), nullable=False)
-    is_admin = db.Column(db.Boolean)
-    created_at = db.Column(db.DateTime)
+    is_admin = db.Column(db.Boolean, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False)
     boards = db.relationship('Board', backref='user', lazy=True)
     articles = db.relationship('Article', backref='user', lazy=True)
 
