@@ -57,6 +57,7 @@ class Auth:
                 abort(401, {'errorMsg': 'authentication token is not available'})
 
             authorization = request.headers.get('Authorization')
+            # TODO: 'Bearer token' 형식이 아닌 'asdasdf'처럼 들어올 경우 에러 핸들링
             token = authorization.split(" ")[1]
             data = Auth.decode_user_token(token)
             if data['error']:
