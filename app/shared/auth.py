@@ -54,11 +54,14 @@ class Auth:
         @wraps(func)
         def decorated_auth(*args, **kwargs):
             if 'Authorization' not in request.headers:
-                abort(401, {'errorMsg': 'authentication token is not available'})
+                abort(401, {'errorMsg': 'authorization token is not available'})
 
             authorization = request.headers.get('Authorization')
-            # TODO: 'Bearer token' 형식이 아닌 'asdasdf'처럼 들어올 경우 에러 핸들링
-            token = authorization.split(" ")[1]
+            splited_token = authorization.split(" ")
+            if len(splited_token) != 2:
+                abort(401, {'errorMsg': 'wrong type of authorization token'})
+
+            token = splited_token[1]
             data = Auth.decode_user_token(token)
             if data['error']:
                 abort(401, data['error'])
