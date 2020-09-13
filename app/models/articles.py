@@ -14,8 +14,8 @@ class Article(db.Model):
     content = db.Column(db.Text, nullable=False)
     board_id = db.Column(db.Integer, db.ForeignKey('board.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    created_at = db.Column(db.DateTime)
-    updated_at = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, nullable=False)
+    updated_at = db.Column(db.DateTime, nullable=False)
 
     def __init__(self, title: str, content: str, board_id: int, user_id: int):
         self.uuid = str(uuid.uuid4())
@@ -31,7 +31,6 @@ class Article(db.Model):
 
     def save(self) -> str:
         db.session.add(self)
-        db.session.commit()
         return self.uuid
 
     def update(self, new_title: str, new_content: str):
@@ -40,12 +39,10 @@ class Article(db.Model):
         if self.content != new_content:
             setattr(self, 'content', new_content)
         self.updated_at = datetime.utcnow()
-        db.session.commit()
         return self.uuid
 
     def delete(self):
         db.session.delete(self)
-        db.session.commit()
 
     @staticmethod
     def get_articles_by_user(user_id: str):

@@ -54,10 +54,14 @@ class Auth:
         @wraps(func)
         def decorated_auth(*args, **kwargs):
             if 'Authorization' not in request.headers:
-                abort(401, {'errorMsg': 'authentication token is not available'})
+                abort(401, {'errorMsg': 'authorization token is not available'})
 
             authorization = request.headers.get('Authorization')
-            token = authorization.split(" ")[1]
+            splited_token = authorization.split(" ")
+            if len(splited_token) != 2:
+                abort(401, {'errorMsg': 'wrong type of authorization token'})
+
+            token = splited_token[1]
             data = Auth.decode_user_token(token)
             if data['error']:
                 abort(401, data['error'])

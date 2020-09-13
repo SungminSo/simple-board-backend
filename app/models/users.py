@@ -15,8 +15,8 @@ class User(db.Model):
     email = db.Column(db.String(128), unique=True, nullable=False)
     name = db.Column(db.String(128), nullable=False)
     password = db.Column(db.String(128), nullable=False)
-    is_admin = db.Column(db.Boolean)
-    created_at = db.Column(db.DateTime)
+    is_admin = db.Column(db.Boolean, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False)
     boards = db.relationship('Board', backref='user', lazy=True)
     articles = db.relationship('Article', backref='user', lazy=True)
 
@@ -36,7 +36,6 @@ class User(db.Model):
 
     def save(self) -> str:
         db.session.add(self)
-        db.session.commit()
         return self.uuid
 
     def update(self, new_email: str, new_username: str, new_password: str) -> str:
@@ -49,12 +48,10 @@ class User(db.Model):
         if self.password != hashed_password:
             setattr(self, 'password', hashed_password)
 
-        db.session.commit()
         return self.uuid
 
     def delete(self):
         db.session.delete(self)
-        db.session.commit()
 
     @staticmethod
     def find_user_by_id(user_id: str):

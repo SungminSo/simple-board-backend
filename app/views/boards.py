@@ -1,6 +1,7 @@
 from flask import request, Blueprint, g
 
 from . import json_response
+from ..models import db
 from ..models.boards import Board
 from ..models.articles import Article
 from ..shared.auth import Auth
@@ -36,8 +37,11 @@ def create_board():
     except KeyError:
         return json_response({'errorMsg': 'please check your request data'}, 400)
 
-    if len(name) == 0:
-        return json_response({'errorMsg': 'please check board name'}, 400)
+    try:
+        if len(name) == 0:
+            return json_response({'errorMsg': 'please check board name'}, 400)
+    except TypeError:
+        return json_response({'errorMsg': 'please check your board name data type'}, 400)
 
     board_already_exists = Board.find_board_by_name(name)
     if board_already_exists:
@@ -50,6 +54,7 @@ def create_board():
         user_id=user_id
     )
     board_uuid = board.save()
+    db.session.commit()
 
     return json_response({'uuid': board_uuid}, 201)
 
@@ -66,8 +71,11 @@ def update_board():
     except KeyError:
         return json_response({'errorMsg': 'please check your request data'}, 400)
 
-    if len(new_name) == 0:
-        return json_response({'errorMsg': 'please check board name'}, 400)
+    try:
+        if len(new_name) == 0:
+            return json_response({'errorMsg': 'please check board name'}, 400)
+    except TypeError:
+        return json_response({'errorMsg': 'please check your board name data type'}, 400)
 
     board = Board.find_board_by_uuid(uuid)
     if not board:
@@ -78,6 +86,8 @@ def update_board():
         return json_response({'errorMsg': 'permission denied'}, 403)
 
     board_uuid = board.update(new_name)
+    db.session.commit()
+
     return json_response({'uuid': board_uuid}, 200)
 
 
@@ -96,6 +106,8 @@ def delete_board(uuid: str):
     for article in articles:
         article.delete()
     board.delete()
+    db.session.commit()
+
     return json_response({}, 204)
 
 

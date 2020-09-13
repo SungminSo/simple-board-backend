@@ -18,7 +18,6 @@ class Logout(db.Model):
 
     def save(self) -> datetime:
         db.session.add(self)
-        db.session.commit()
         return self.logout_at
 
     @staticmethod

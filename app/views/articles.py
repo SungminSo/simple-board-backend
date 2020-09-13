@@ -1,6 +1,7 @@
 from flask import request, Blueprint, g
 
 from . import json_response
+from ..models import db
 from ..models.boards import Board
 from ..models.articles import Article
 from ..shared.auth import Auth
@@ -43,9 +44,11 @@ def create_article():
     except KeyError:
         return json_response({'errorMsg': 'please check your request data'}, 400)
 
-    if len(title) == 0 or len(content) == 0:
-        return json_response({'errorMsg': 'please check title and content'}, 400)
-
+    try:
+        if len(title) == 0 or len(content) == 0:
+            return json_response({'errorMsg': 'please check title and content'}, 400)
+    except TypeError:
+        return json_response({'errorMsg': 'please check you title, content, board_uuid data type'}, 400)
     board = Board.find_board_by_uuid(board_uuid)
     if not board:
         return json_response({'errorMsg': 'board does not exist'}, 404)
@@ -59,6 +62,7 @@ def create_article():
         user_id=user_id
     )
     article_uuid = article.save()
+    db.session.commit()
 
     return json_response({'uuid': article_uuid}, 201)
 
@@ -76,9 +80,11 @@ def update_article():
     except KeyError:
         return json_response({'errorMsg': 'please check your request data'}, 400)
 
-    if len(new_title) == 0 or len(new_content) == 0:
-        return json_response({'errorMsg': 'please check title and content'}, 400)
-
+    try:
+        if len(new_title) == 0 or len(new_content) == 0:
+            return json_response({'errorMsg': 'please check title and content'}, 400)
+    except TypeError:
+        return json_response({'errorMsg': 'please check you title and content data type'}, 400)
     article = Article.find_article_by_uuid(uuid)
     if not article:
         return json_response({'errorMsg': 'article does not exist'}, 404)
@@ -88,6 +94,8 @@ def update_article():
         return json_response({'errorMsg': 'permission denied'}, 403)
 
     article_uuid = article.update(new_title, new_content)
+    db.session.commit()
+
     return json_response({'uuid': article_uuid}, 200)
 
 
@@ -103,4 +111,6 @@ def delete_article(uuid: str):
         return json_response({'errorMsg': 'permission denied'}, 403)
 
     article.delete()
+    db.session.commit()
+
     return json_response({}, 204)

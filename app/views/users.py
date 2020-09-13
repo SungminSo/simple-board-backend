@@ -1,6 +1,8 @@
 from flask import request, Blueprint
+from sqlalchemy import exc
 
 from . import json_response
+from ..models import db
 from ..models.users import User
 from ..models.logout import Logout
 from ..shared.auth import Auth
@@ -20,8 +22,11 @@ def sign_up():
     except KeyError:
         return json_response({'errorMsg': 'please check your request data'}, 400)
 
-    if len(email) == 0 or len(username) == 0 or len(password) == 0:
-        return json_response({'errorMsg': 'please check your email, username and password'}, 400)
+    try:
+        if len(email) == 0 or len(username) == 0 or len(password) == 0:
+            return json_response({'errorMsg': 'please check your email, username and password'}, 400)
+    except TypeError:
+        return json_response({'errorMsg': 'please check your email, username and password data type'}, 400)
 
     user_already_exists = User.find_user_by_email(email)
     if user_already_exists:
@@ -33,9 +38,16 @@ def sign_up():
         password=password,
         is_admin=False
     )
-    user_uuid = user.save()
 
-    return json_response({'uuid': user_uuid}, 201)
+    # create a savepoint in case of race condition
+    db.session.begin_nested()
+    try:
+        user_uuid = user.save()
+        db.session.commit()
+        return json_response({'uuid': user_uuid}, 201)
+    except exc.IntegrityError:
+        db.session.rollback()
+        return json_response({'errorMsg': 'fail to create user'}, 409)
 
 
 @user_api.route("/log-in", methods=['POST'])
@@ -49,8 +61,11 @@ def log_in():
     except KeyError:
         return json_response({'errorMsg': 'please check your request data'}, 400)
 
-    if len(email) == 0 or len(password) == 0:
-        return json_response({'errorMsg': 'please check your email and password'}, 400)
+    try:
+        if len(email) == 0 or len(password) == 0:
+            return json_response({'errorMsg': 'please check your email, username and password'}, 400)
+    except TypeError:
+        return json_response({'errorMsg': 'please check your email, username and password data type'}, 400)
 
     user = User.find_user_by_email(email)
 
@@ -75,5 +90,6 @@ def log_out():
 
     logout = Logout(token)
     logout_at = logout.save()
+    db.session.commit()
 
     return json_response({'logout_at': logout_at}, 200)
