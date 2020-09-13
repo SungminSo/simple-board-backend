@@ -1,7 +1,8 @@
 from flask import request, Blueprint
+from sqlalchemy import exc
 
 from . import json_response
-from ..models import db_commit
+from ..models import db
 from ..models.users import User
 from ..models.logout import Logout
 from ..shared.auth import Auth
@@ -37,11 +38,16 @@ def sign_up():
         password=password,
         is_admin=False
     )
-    # TODO: 레이스 컨디션 알아보고 핸들링
-    user_uuid = user.save()
-    db_commit()
 
-    return json_response({'uuid': user_uuid}, 201)
+    # create a savepoint in case of race condition
+    db.session.begin_nested()
+    try:
+        user_uuid = user.save()
+        db.session.commit()
+        return json_response({'uuid': user_uuid}, 201)
+    except exc.IntegrityError:
+        db.session.rollback()
+        return json_response({'errorMsg': 'fail to create user'}, 409)
 
 
 @user_api.route("/log-in", methods=['POST'])
@@ -84,6 +90,6 @@ def log_out():
 
     logout = Logout(token)
     logout_at = logout.save()
-    db_commit()
+    db.session.commit()
 
     return json_response({'logout_at': logout_at}, 200)

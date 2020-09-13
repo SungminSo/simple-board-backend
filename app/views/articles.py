@@ -1,7 +1,7 @@
 from flask import request, Blueprint, g
 
 from . import json_response
-from ..models import db_commit
+from ..models import db
 from ..models.boards import Board
 from ..models.articles import Article
 from ..shared.auth import Auth
@@ -62,7 +62,7 @@ def create_article():
         user_id=user_id
     )
     article_uuid = article.save()
-    db_commit()
+    db.session.commit()
 
     return json_response({'uuid': article_uuid}, 201)
 
@@ -94,7 +94,7 @@ def update_article():
         return json_response({'errorMsg': 'permission denied'}, 403)
 
     article_uuid = article.update(new_title, new_content)
-    db_commit()
+    db.session.commit()
 
     return json_response({'uuid': article_uuid}, 200)
 
@@ -111,6 +111,6 @@ def delete_article(uuid: str):
         return json_response({'errorMsg': 'permission denied'}, 403)
 
     article.delete()
-    db_commit()
+    db.session.commit()
 
     return json_response({}, 204)
