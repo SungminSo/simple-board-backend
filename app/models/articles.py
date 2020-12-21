@@ -6,7 +6,7 @@ import uuid
 
 
 class Article(db.Model):
-    __table_name__ = "article"
+    __tablename__ = "article"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     uuid = db.Column(db.String(128), unique=True, nullable=True)

@@ -3,7 +3,7 @@ from . import db
 
 
 class Logout(db.Model):
-    __table_name__ = "logout"
+    __tablename__ = "logout"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     token = db.Column(db.String(512), unique=True, nullable=False)

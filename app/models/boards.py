@@ -7,7 +7,7 @@ import uuid
 
 
 class Board(db.Model):
-    __table_name__ = "board"
+    __tablename__ = "board"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     uuid = db.Column(db.String(128), unique=True, nullable=False)
